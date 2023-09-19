@@ -1,0 +1,99 @@
+<div class="relative pt-4 flex-col">
+    <div class="flex justify-between">
+        <div class="flex align-middle">
+            <div class="p-2">
+                <img src="assets/search.png" alt="" class="icon">
+            </div>
+            <div class="border-b-2 border-slate-100">
+                <input [(ngModel)]="search" type="text" placeholder="Find Todo" class="p-2" style="width: 300px;">
+            </div>
+        </div>
+        <img (click)="goShowCreateTodoModal()" class="todo-add cursor-pointer" src="assets/add.png" alt="">
+    </div>
+    <div class="flex-col py-3">
+        <div *ngIf="todos.length">
+            <div  class="flex-col mb-4" *ngFor="let todo of filteredTodos" >
+                <div class="flex p-2 mb-2 rounded" [style.background-color]="todo.bg_color">
+                    <div class="mr-2">
+                        <div (click)="toggleCompleteTodo(todo.id)" class="rounded border-2 border-gray-300 hover:bg-gray-300" [ngClass]="{'bg-green-500': todo.completed}" style="height: 20px;width: 20px;"></div>
+                    </div>
+                    <div class="text-sm tracking-widest" [ngClass]="{'line-through': todo.completed}">{{todo.task}}</div>
+                </div>
+                <div class="flex justify-between">
+                    <div class="flex-col">
+                        <div class="flex mb-1">
+                            <div class="text-xs text-white bg-green-500 py-1 px-2 rounded border shadow" *ngFor="let tag of todo.tags">
+                                {{tag.name}}
+                            </div>
+                        </div>
+                        <div class="text-xs">Date: <span>{{getDueDate(todo.due_date)}}</span></div>
+                    </div>
+                    <div class="flex">
+                        <div class="cursor-pointer text-xs text-blue-500 hover:text-blue-600 mr-3" (click)="updateOrCreate(true, todo.id)">Edit</div>
+                        <div class="cursor-pointer text-xs text-red-500 hover:text-red-600" (click)="deleteTodoId=todo.id;showDeleteTodoModal = true; ">Delete</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <!-- Create todo Modal -->
+  <app-modal [isOpen]="showCreateOrUpdateTodoModal">
+    <div>
+        <form action="#" id="createTodoForm" [formGroup]="formGroup" class="flex-col">
+            <div class="flex-col" >
+                <div class="flex-col">
+                    <input class="px-3 py-2" type="text" placeholder="Write a task..." formControlName="Task">
+                    <div *ngIf="formGroup.get('Task')!.hasError('required') && formGroup.get('Task')!.touched" class="text-red-500 text-sm">Required</div>
+                </div>
+                <div class="my-4">
+                    <input placeholder="Select background color" (colorPickerChange)="colorPickerChange($event)" [(colorPicker)]="bgColor" [style.background]="bgColor" class="border px-3 py-2 rounded" formControlName="BackgroundColor"/>
+                    <div *ngIf="formGroup.get('BackgroundColor')!.hasError('required') && formGroup.get('BackgroundColor')!.touched" class="text-red-500 text-sm">Required</div>
+                </div>
+                <div class="text-xs text-gray-500 mb-2">Target date:</div>
+                <input class="mb-4" type="date" formControlName="DueDate">
+                <div class="flex mt-2">
+                    <img src="assets/add-tag.png" alt="" class="icon-sm mr-2">
+                    <div class="text-xs cursor-pointer text-blue-500 hover:text-blue-600" (click)="showTagSelectorModal = true">Add Tag</div>
+                </div>
+                <div class="flex mt-4">
+                    <div class="px-3 py-1 rounded bg-gray-100 mr-2 cursor-pointer" (click)="removeFromSelectedTag(tag.id)" *ngFor="let tag of displayAddTodoModalTags">{{tag.name}}</div>
+                </div>
+            </div>
+            <div class="flex justify-end mt-5">
+                <button class="flex-1 rounded bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 mr-2" (click)="closeCreateTodoModal()">Cancel</button>
+                <button type="submit" value="Add" class="flex-1 rounded bg-green-500 hover:bg-green-600 text-white text-sm px-4 " [ngClass]="{disabled: isFormGroupInvalid}" [disabled]="isFormGroupInvalid" (click)="updateOrCreateTodo()">{{updateMode ? 'Update': 'Add'}}</button>
+            </div>
+        </form>
+    </div>
+  </app-modal>
+
+  <!-- Tag Selector -->
+  <app-modal [isOpen]="showTagSelectorModal">
+    <div class="flex-col">
+        <div class="mb-2 text-xs">Select a tag:</div>
+        <select class="px-3 py-2" [(ngModel)]="tagSelectorSelectedIndex" (change)="onTagSelect($event)" style="height: 40px; width: 100%;">
+            <option value="0">Select Tags</option>
+            <option *ngFor="let tag of availableTags" [value]="tag.id">{{tag.name}}</option>    
+        </select>
+        <div class="flex mt-3 justify-end">
+            <button class="rounded text-sm bg-gray-300 hover:bg-gray-600 py-1 px-2 text-white" (click)="showTagSelectorModal=false">Cancel</button>
+        </div>
+    </div>
+  </app-modal>
+
+  <!-- Delete Todo  Modal-->
+  <app-modal [isOpen]="showDeleteTodoModal">
+    <div>
+        <form action="#" class="flex-col">
+            <div class="text-sm mb-4">
+                Are you sure?
+            </div>
+            <div class="flex justify-end">
+                <button class="flex-1 rounded bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 mr-2" (click)="showDeleteTodoModal = false">Cancel</button>
+                <input type="submit" value="Delete" class="flex-1 rounded bg-red-500 hover:bg-red-600 text-white text-sm px-4" (click)="deleteTodo()">
+            </div>
+        </form>
+    </div>
+  </app-modal>

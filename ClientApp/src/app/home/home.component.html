@@ -1,0 +1,12 @@
+<div class="py-20">
+    <div class="mt-20 bg-white w-75 m-auto rounded p-10">
+        <div class="flex">
+            <div class="flex-none mr-8">
+                <app-tag [tags]="tags" [todos]="todos" (selectedTagEmitted)="changeSelectedTag($event)" (tagsEmitted)="onTagsEmitted($event)"></app-tag>
+            </div>
+            <div class="flex-1">
+                <app-todo [tags]="tags" [todos]="todos" [selectedTag]="selectedTag" (todosEmitted)="onTodosEmitted($event)"></app-todo>
+            </div>
+        </div>
+    </div>
+</div>
