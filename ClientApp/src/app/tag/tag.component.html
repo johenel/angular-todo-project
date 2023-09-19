@@ -1,0 +1,71 @@
+<div class="mr-4 relative">
+    <button *ngIf="selectedTag" 
+            class="tag-delete rounded text-sm px-4 text-white bg-red-500 hover:bg-red-600"
+            (click)="showDeleteTagModal=true">
+        Delete selected tag
+    </button>
+    <div class="flex-col">
+        <div id="btnAddTag" class="flex justify-end cursor-pointer text-blue-400 hover:text-blue-600" (click)="goShowCreateTagModal()">
+            <img src="assets/add-tag.png" class="icon-sm mr-2" alt="">
+            <span class="text-sm">Add Tag</span>
+        </div>
+        <div class="flex align-middle pt-4">
+            <div class="p-2">
+                <img src="assets/search.png" alt="" class="icon">
+            </div>
+            <div class="border-b-2 border-slate-100">
+                <input [(ngModel)]="search" type="text" placeholder="Search Tag" class="p-2">
+            </div>
+        </div>
+        <div class="tag-list flex-col pt-4">
+            <div *ngIf="!search" class="flex justify-end tag-item relative cursor-pointer hover:bg-gray-100 hover:rounded" 
+                (click)="selectTag(null)"
+                [ngClass]="{selected: selectedTag==null}">
+                <img [src]="tagIcon(false)" class="icon-sm mr-1" alt="">
+                <div class="text-sm mr-2">All</div>
+                <span class="tag-count">{{todos.length}}</span>
+            </div>
+            <div  *ngIf="tags.length">
+                <div *ngFor="let tag of filteredTags" 
+                    (click)="selectTag(tag.id)"
+                    class="tag-created flex justify-end tag-item relative cursor-pointer hover:bg-gray-100 hover:rounded"
+                    [ngClass]="{selected: selectedTag==tag.id}"
+                    >
+                        <img [src]="tagIcon(false)" class="icon-sm mr-1" alt="">
+                        <div class="tag-name text-sm mr-2">{{tag.name}}</div>
+                        <span class="tag-count">{{tag.count}}</span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+  <!-- Create tag Modal -->
+  <app-modal [isOpen]="showCreateTagModal" (propertyEmitter)="closeCreateTagModal()">
+    <div>
+        <form action="#" id="createTagForm" class="flex-col">
+            <div class="p-2 mb-3 border-2 border-red-300" [ngClass]="{'border-none': validForm}">
+                <input id="inputTagName" type="text" placeholder="Enter tag name..."  [(ngModel)]="formName" name="formName"  required>
+            </div>
+            <div class="flex justify-end">
+                <button class="flex-1 rounded bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 mr-2" (click)="closeCreateTagModal()">Cancel</button>
+                <input id="addTagSubmit" type="submit" value="Add" class="flex-1 rounded bg-green-500 hover:bg-green-600 text-white text-sm px-4" (click)="createTag()">
+            </div>
+        </form>
+    </div>
+  </app-modal>
+<!-- Delete Tag Modal -->
+  <app-modal [isOpen]="showDeleteTagModal" (propertyEmitter)="closeDeleteTagModal()">
+    <div>
+        <form action="#" id="createTagForm" class="flex-col">
+            <div class="text-sm mb-4">
+                {{deleteTagConfirmationMessage}}
+            </div>
+            <div class="flex justify-end">
+                <button class="flex-1 rounded bg-gray-500 hover:bg-gray-600 text-white text-sm px-4 mr-2" (click)="closeDeleteTagModal()">Cancel</button>
+                <input type="submit" value="Delete" class="flex-1 rounded bg-red-500 hover:bg-red-600 text-white text-sm px-4" (click)="deleteTag()">
+            </div>
+        </form>
+    </div>
+  </app-modal>

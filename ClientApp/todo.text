@@ -1,0 +1,12 @@
+
+
+Requirements:
+
+Goal -> Create a TODO app
+
+1. User can change background color of todo items.
+2. User can add and remove TAGS to todo item.
+3. User can filter todo items by tags.
+4. Add shortcuts on UI for the most used tags by the user.
+5. Add a text search for TODO items.
+6. Add soft delete to todo items.
